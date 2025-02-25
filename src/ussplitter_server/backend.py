@@ -111,6 +111,21 @@ def get_db() -> Generator[sqlite3.Connection, None, None]:
         conn.close()
 
 
+def get_models() -> list[str]:
+    """
+    Get a list of available models
+
+    :return: A list of available models
+    """
+    logger.debug("Getting available models.")
+    models = []
+    for model in demucs.api.list_models().get("single"):
+        models.append(model)
+    for model in demucs.api.list_models().get("bag"):
+        models.append(model)
+    return models
+
+
 def make_folder() -> tuple[str, Path]:
     """
     Create a new directory for a song to be stored in
@@ -154,7 +169,7 @@ def get_status(song_uuid: str) -> SplitStatus:
     Get the status of a song
 
     :param song_uuid: The UUID of the song
-    :return: True if the song has been separated, False otherwise
+    :return: The status of the song
     """
 
     with get_db() as db:

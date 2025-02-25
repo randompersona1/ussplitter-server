@@ -7,15 +7,24 @@ from ussplitter_server import backend
 app = flask.Flask(__name__)
 
 
+@app.route("/connect", methods=["GET"])
+def connect():
+    """Initial connection to the server to check health."""
+    return "Connected", 200
+
+
+@app.route("/models", methods=["GET"])
+def get_models():
+    return flask.jsonify(backend.get_models()), 200
+
+
 @app.route("/split", methods=["POST"])
 def split():
-    # Create a temporary directory for everything to be stored in
     input_file = flask.request.files.get("audio")
     if input_file is None:
         return "No audio file provided", 400
 
-    # get model from request args
-    model = flask.request.args.get(key="model", type=str)
+    model = flask.request.args.get(key="model", type=str, default="")
 
     song_uuid, song_path = backend.make_folder()
     input_file.save(song_path)
