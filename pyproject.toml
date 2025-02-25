@@ -1,0 +1,64 @@
+[project]
+name = "ussplitter-server"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+licence = "LGPL-3.0-or-later"
+requires-python = "~=3.11"
+dependencies = [
+    "flask>=3.1.0",
+    "numpy~=1.24.1",
+    "platformdirs>=4.3.6",
+    "waitress>=3.0.2",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ussplitter-server"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cu121", marker = "platform_system != 'Darwin'"},
+]
+torchvision = [
+  { index = "pytorch-cu121", marker = "platform_system != 'Darwin'"},
+]
+torchaudio = [
+  { index = "pytorch-cu121", marker = "platform_system != 'Darwin'"},
+]
+demucs = { git = "https://github.com/adefossez/demucs", rev = "b9ab48cad45976ba42b2ff17b229c071f0df9390" }
+
+[[tool.uv.index]]
+name = "pytorch-cu121"
+url = "https://download.pytorch.org/whl/cu121"
+explicit = true
+
+[dependency-groups]
+dev = [
+    "ruff>=0.9.3",
+    "mypy>=1.14.1",
+    "pip>=25.0",
+    "types-requests>=2.32.0.20241016",
+    "types-pyyaml>=6.0.12.20241230",
+    "types-setuptools>=75.8.0.20250110",
+    "types-tabulate>=0.9.0.20241207",
+    "types-tqdm>=4.67.0.20241221",
+    "types-colorama>=0.4.15.20240311",
+]
+torch = [
+    "demucs>=4.0.1",
+    "torch>=2.1.2",
+    "torchaudio<2.2.0",
+]
+
+[tool.mypy]
+mypy_path = "src"
+explicit_package_bases = true
+namespace_packages = true
+
+[[tool.mypy.overrides]]
+module = ["appdirs.*", "usdb_syncer.*"]
+follow_untyped_imports = true
